@@ -1,0 +1,208 @@
+#
+# Configuration file. Change the parameters before running the pipeline and other scripts.
+#
+
+
+
+
+
+
+# ===== DeepContact ===== 
+# Remember to also change the parameters and path specified in the file default.yaml provided by DeepContact
+
+[deepcontact]
+path=/users/cn/sjin/programs/DeepContact/deepcontact
+
+
+[aln-deepcontact]
+gen_feature_with_jackhmmer=No # if Yes, jackhmmer_result will be used to generate feature
+
+
+# run hhblits and reformat output to aln file
+[hhblits-deepcontact]
+command=hhblits
+uniprot_db=/users/cn/sjin/programs/hhsuite/databases/uniprot20_2016_02/uniprot20_2016_02
+n_iters=3
+e_value=0.001
+maxfilt=500000
+diff=inf
+id=99
+cov=50
+
+
+# run jackhmmer
+[jackhmmer-deepcontact]
+command=jackhmmer
+uniref_db=/db/uniprot//2019_02/uniref/uniref100/blast/db/uniref100.fasta
+inc_E=10.0
+n_iter=3
+
+
+# run hhfilter after jackhmmer
+[hhfilter-deepcontact]
+command=hhfilter
+
+
+# run ccmpred
+[ccmpred-deepcontact]
+command=ccmpred
+#cuda_dev=6   # (do not include if use default cuda device)
+
+
+# run freecontact in evfold mode
+[freecontact-deepcontact]
+command=freecontact   
+
+
+# run alnstats
+[alnstats-deepcontact]
+command=alnstats
+
+
+# run blastpgp
+[blast-deepcontact]
+command=blastpgp
+n_iters=3
+e_value=0.001
+database=nr
+
+
+# run makemat
+[makemat-deepcontact]
+command=makemat
+
+        
+# run psipred
+[psipred-deepcontact]
+command=psipred
+data=/users/cn/sjin/programs/psipred/psipred-4.0/data
+
+
+# run psipred_pass2
+[psipred_pass2-deepcontact]
+command=psipass2
+n_iters=1
+DCA=1.0
+DCB=1.0
+
+
+# run solvpred
+[solvpred-deepcontact]
+command=solvpred
+data=/users/cn/sjin/programs/metapsicov/metapsicov-2.0.3/data/weights_solv.dat
+
+
+# run hhmake (includes neff)
+[hhmake-deepcontact]
+command=hhmake
+
+
+
+
+
+
+
+
+# ===== DeepConPred2 ===== 
+
+[deepconpred]
+path=/users/cn/sjin/programs/DeepConPred2/DeepConPred2
+
+
+[hhblits-deepconpred]
+command=hhblits
+database=/users/cn/sjin/programs/hhsuite/databases/uniprot20_2016_02/uniprot20_2016_02
+v=0
+maxres=40000
+z=0
+
+
+[psiblast-deepconpred]
+command=psiblast
+database=/db/uniprot/2019_02/uniref/uniref90/blast/db/uniref90.fasta
+niterations=3
+nalignments=1
+
+
+[spider3-deepconpred]
+path=/users/cn/sjin/programs/spider/SPIDER3-server
+
+
+[ccmpred-deepconpred]
+command=ccmpred
+
+
+
+
+
+
+
+# ===== DeepCov =====
+
+[deepcov]
+path=/users/cn/sjin/programs/DeepCov/DeepCov-1.0
+receptive_field=41
+model=covar
+
+
+
+
+
+
+
+# ==== Multiple sequence alignment for DeepCov and DeepConPred2 ====
+# Note that DeepContact's script includes a step for the generation of MSA given a fasta file
+# We can avoid this step by modifying that script, so that we can use the same alignment for all three methods
+# However, I didn't modify it as we decided to use all the default configurations whenever possible
+# The parameters used to obtain the MSA in DeepContact is different to the ones used in DeepConPred and DeepCov
+
+[alignment]
+command=hhblits
+database=/users/cn/sjin/programs/hhsuite/databases/uniprot20_2016_02/uniprot20_2016_02
+niterations=3
+diff=inf
+cov=60
+
+
+
+
+
+
+
+
+# ==== Molecular simulations with Xplor-NIH ====
+
+[xplor]
+command=/users/cn/abaltzis/bin/xplor
+mode=soft
+nmodels=500
+topavg=0.05
+betaoo=no
+nexperiment=1
+
+
+
+
+
+
+
+
+# ==== Structure-based trees ====
+
+[tree1d]
+command=fastme
+method=BioNJ
+parameters=-p LG -g 1.0 -s -n -z 5 -b 100 -B
+
+
+[tree3d]
+method=tmalign
+mode=4
+mexp=2
+
+
+
+
+
+
+

@@ -17,6 +17,7 @@
   Other dependencies, such as Tensorflow, Theano, Lasagne, etc. are specified by each of the software above. They should be installed as well.
 
 4. Modify configuration.yaml and set_envs.sh files with the correct paths
+5. Set environment variable `export PYTHONPATH=/path/to/DeepConTree:$PYTHONPATH`
 
 ## Usage
 This pipeline can be used for the prediction of **protein contacts**, the prediction of protein **3D structures** through a contact-driven protein folding approach, and/or the reconstruction of **structure-based trees**.
