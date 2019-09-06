@@ -50,6 +50,9 @@ For example, if you want to predict contacts using deepconpred and deepcontact, 
 python path/to/pipeline.py -seq path/to/multifasta.fa -pdbf path/to/pdbf -ref path/to/ref -o path/to/output_directory -cpu 16 -actions contacts -method deepconpred deepcontact
 ```
 
+Note that the contacts (in RR format) and contactbench files produced provide a probability score for each pair of residues that indicates the probability of them being in contact. These are the raw predictions without applying any kind of filtering. The ones that are used in the simulations are the filtered one.
+
+
 ### Prediction of 3D structures
 If you want to predict structures, please specify `-action simulations`.
 You can run the pipeline in a straightforward way by predicting both contacts and structures. Optionally, you can specify the filtering thresholds you want. If the thresholds are not specified, default values will be used (check `python path/to/pipeline.py -h`).
@@ -60,7 +63,7 @@ Another option (recommended) is:
 1. First, predict the **contacts for all the proteins** you want.
 2. Check the predictions and **decide the probability threshold** based on precision-recall metrics, etc. If you want you can also set a threshold based on conservation score.
 3. **Run simulations** using the already predicted contacts and the selected filtering thresholds. In this case, you have to:
-    a) Provide a list `-con_list path/to/con_list` with three columns: /absolute/path/to/contact_folder folder_name probability_threshold. In this way, you can provide multiple folders, where contacts predicted by different methods, etc. are stored. The resulting structures will be stored in output_dir/simulations/folder_name. As you might want to use a different threshold of probability score for each subset of contacts, this should be specified in the third column. 
+    a) Provide a list `-con_list path/to/con_list` with three columns: /absolute/path/to/contact_folder folder_name probability_threshold. In this way, you can provide multiple folders, where contacts predicted by different methods, etc. are stored. The resulting structures will be stored in output_dir/simulations/folder_name. As you might want to use a different threshold of probability score for each subset of contacts, this should be specified in the third column. For the native contacts, you should use 'native' as folder_name.
     b) If you want to filter the contacts according to both pscore and cscore, you have to specify -cscore as well. In this case, you need to provide the alignment that will be considered for the calculation of conservation score. Make sure that the pdb files of all the proteins in that alignment are stored in the pdb folder you provide, and the contact files of all the proteins are provided. Note that the -seq multifasta file that you provide can contain only few proteins that you are interested on predicting the structure, but the alignment might contain other homologous sequences that are not in the -seq multifasta file.
     c) Optionally, you can provide the folder where the SSE (secondary structure element) predictions are stored. If not, the pipeline will use Spider3 to predict the SSEs before running the simulations. The SSE files (with suffix .sse) should have the same format as the output of Spider3.
 For example:
@@ -81,7 +84,7 @@ As in the previous case, you can run the pipeline in a straightforward way:
 ```bash
 python path/to/pipeline.py -seq path/to/multifasta.fa -pdbf path/to/pdbf -ref path/to/ref -o path/to/output_directory -cpu 16 -actions contacts simulations trees -method deepconpred deepcontact -pdeepconpred 0.35 -pdeepcontact 0.95
 ```
-Or run the pipeline once you have all the structures predicted. In this case, you have to provide a list `-str_list path/to/str_list` with two columns: /absolute/path/to/structure_folder folder_name. In this way, a tree will created for each folder provided.
+Or run the pipeline once you have all the structures predicted. In this case, you have to provide a list `-str_list path/to/str_list` with two columns: /absolute/path/to/structure_folder folder_name. In this way, a tree will created for each folder provided. For the experimental structures, you should use 'experimental' as folder_name.
 ```bash
 python path/to/pipeline.py -seq path/to/multifasta.fa -pdbf path/to/pdbf -ref path/to/ref -o path/to/output_directory -cpu 16 -actions trees -str_list path/to/str_list
 ```

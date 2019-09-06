@@ -140,7 +140,7 @@ def __compute_contacts(contact_script,methods,cpu,ids):
     for prot in ids:
         description_prog = "Predicting contacts for " + prot + " using " + str(methods) + "\n"
         command = "python {} seq/{}.fa contacts/ -run {} -cpu {}".format(contact_script,prot,run,cpu)
-        #__run_command(description_prog,command,separator="="*60)
+        __run_command(description_prog,command,separator="="*60)
     
     
     # Contactbench
@@ -223,8 +223,6 @@ def __compute_structures(config,paths,scripts,args,ids,cids):
                 folder = line[0]
                 name = line[1]
                 threshold = line[2]
-                if args.cscore is not None and name != "native":
-                    folder = paths["out_dir"] + "/contacts/" + name + "/cscore"
                 cons[name] = (folder,threshold)
         # Run simulations
         for name in cons.keys():
@@ -245,10 +243,11 @@ def __compute_structures(config,paths,scripts,args,ids,cids):
                                     scripts["xplor"],fasta_file,
                                     con_file,sse_file,out_dir,args.cpu,
                                     threshold,args.seqsep)
-                #__run_command(description_prog,command,"="*60)
+                __run_command(description_prog,command,"="*60)
                 a = out_dir + "/annealing_ave.pdb"
                 b = "simulations/" + name + "/n" + str(n) + "/" + prot + ".pdb"
-                #shutil.copy(a,b)
+                shutil.copy(a,b)
+                print(command)
     
             # Write list of structures
             if "trees" in args.actions:
@@ -284,6 +283,7 @@ def __manage_sse(sse_dir,script,ids,actions,methods,cpu):
                 description_prog = "Predicting SSEs with Spider3 for " + prot
                 command = "python {} seq/{}.fa sse/ -cpu {} -only_sse".format(script,prot,cpu)
                 __run_command(description_prog,command,separator="="*60)
+                os.rename("sse/"+prot+".spd33","sse/"+prot+".sse")
 
 
 
@@ -331,37 +331,47 @@ def __apply_cscore(args,paths,scripts,ids,cids):
                     os.makedirs("contacts/"+name)
                 for prot in cids:
                     pred = folder + "/" + prot + ".con"
-                    if not os.path.isfile(pred):
-                        print("Warning: " + pred + " does not exist")
-                        print("Warning: The conservation score will be computed without considering the contact predictions of the protein " + prot)
-                    else:
+                    if os.path.isfile(pred):
                         prediction = "contacts/"+name+"/"+prot+".con"
                         native = "contacts/native/"+prot+".con"
                         contactbench = "contacts/"+name+"/"+prot+".contactbench"
                         shutil.copy(pred,prediction)
                         __rr_to_contactbench(prediction,native,contactbench)
 
-    
-    # Calculate cscore and filter contacts
+    # Read con_list {name : (path/to/folder, threshold)}
+    con_list = {}
     with open(paths["con_list"]) as f:
         for line in f:
             line = line.strip().split(" ")
             name = line[1]
             p = float(line[2])
-            if name == "native":
-                continue
-            # Create folder
             if "contacts" in args.actions:
                 folder = line[0] 
             else:
-                folder = "./contacts/" + name 
-            if not os.path.exists(folder + "/cscore"):
+                folder = paths["out_dir"] + "/contacts/" + name
+            # Create folder
+            if not os.path.exists(folder + "/cscore") and name != "native":
                 os.makedirs(folder + "/cscore")
-            # Filter contactbench files
-            for prot in cids:
-                outprefix = folder + "/cscore/" + prot
-                contactbench1 = folder + "/" + prot + ".contactbench"
-                contactbench2 = outprefix + ".contactbench"
+            con_list[name] = (folder,p)
+
+    # Calculation of conservation score
+    paths["con_list"] = paths["out_dir"] + "/contacts/con_list"
+    w = open(paths["con_list"],"wt")
+    for name in con_list.keys():
+        if name == "native":
+            w.write(paths["out_dir"] + "/contacts/native native 0\n")
+            continue
+        folder = con_list[name][0]
+        p = con_list[name][1]
+        # Filter contactbench files
+        for prot in cids:
+            outprefix = folder + "/cscore/" + prot
+            contactbench1 = folder + "/" + prot + ".contactbench"
+            contactbench2 = outprefix + ".contactbench"
+            if not os.path.isfile(contactbench1):
+                print("Warning: no contact file for " + prot + " " + name +" is provided")
+                print("Warning: The conservation score will be computed without considering the contact predictions of the protein " + prot)
+            else:
                 cont = open(contactbench2,"wt")
                 with open(contactbench1) as f:
                     for line in f:
@@ -369,20 +379,20 @@ def __apply_cscore(args,paths,scripts,ids,cids):
                         if int(fields[2]) >= args.seqsep and float(fields[3]) >= p:
                             cont.write(line)
                 cont.close()
-            # Estimate Cscore
-            for prot in ids:
-                outprefix = folder + "/cscore/" + prot
-                contactbench = outprefix + ".contactbench"
-                description_prog = "Estimating the conservation of the predicted contacts"
-                command = "bash {} {} {} {} {} {} {}".format(scripts["cscore"],paths["c_aln"],contactbench,outprefix,p,args.cscore,args.cweight)
-                __run_command(description_prog,command,separator=" ")
-            # Remove intermediate files
-            for prot in cids:
-                os.remove(folder+"/cscore/" + prot + ".contactbench")
-                os.remove(folder + "/" + prot + ".contactbench")
-                os.remove(folder + "/" + prot + ".con")
+        # Estimate Cscore
+        for prot in ids:
+            outprefix = folder + "/cscore/" + prot
+            contactbench = outprefix + ".contactbench"
+            description_prog = "Estimating the conservation of the predicted contacts"
+            command = "bash {} {} {} {} {} {} {}".format(scripts["cscore"],paths["c_aln"],contactbench,outprefix,p,args.cscore,args.cweight)
+            __run_command(description_prog,command,separator=" ")
+        # Rewrite con_list
+        folder = folder + "/cscore"
+        w.write(folder + " " + name + " " + str(p) + "\n")
+    w.close()
     
-    
+
+        
     
 # ==================
 # ==== 3D TREES ====
