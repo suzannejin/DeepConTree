@@ -2,6 +2,7 @@
 
 
 #
+## The original script comes from https://github.com/CarlosLElorduy/msa2cscore
 ## Usage: python msa2cscore.py <fasta with pdb id> <contactbench> <output> <pscore> <cscore> <yes/no considerWeights>
 #
 
