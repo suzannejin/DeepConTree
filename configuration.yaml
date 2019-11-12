@@ -175,10 +175,10 @@ cov=60
 [xplor]
 command=/users/cn/abaltzis/bin/xplor
 mode=soft
-nmodels=500
-topavg=0.05
+nmodels=250
+topavg=0.10
 betaoo=no
-nexperiment=1
+nexperiment=2
 
 
 

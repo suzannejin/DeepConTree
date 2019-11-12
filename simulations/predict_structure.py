@@ -66,6 +66,7 @@ if __name__ == '__main__':
     import os
     import argparse
     import configparser
+    import shutil
     from simulations.convert_one_to_three import __convert_one_to_three
     from simulations.prepare_restraints import __prepare_restraints_contacts
     from simulations.prepare_restraints import __prepare_restraints_dihedral
@@ -87,7 +88,7 @@ if __name__ == '__main__':
     fasta_file = os.path.abspath(args.fasta_file)
     con_file = os.path.abspath(args.con_file)
     sse_file = os.path.abspath(args.sse_file)
-    ID = os.path.basename(fasta_file.split(".")[0])
+    ID = os.path.basename(fasta_file).split(".")[0]
     seq_file = ID + ".seq"
     con_new = ID + ".con"
     tbl = con_new + ".tbl"
@@ -102,6 +103,7 @@ if __name__ == '__main__':
     yaml = "{}/configuration.yaml".format(bin_dir)
     config = configparser.ConfigParser()
     config.read(yaml)
+    shutil.copy(yaml,out_dir)
 
 
     # Prepare files

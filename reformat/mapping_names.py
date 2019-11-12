@@ -24,6 +24,8 @@ def __map_names(fasta_file,reference_file,corrected_fasta_file,to):
     # Get fasta lines  {name : seq}
     with open(fasta_file) as fa:
         for line in fa:
+            if line == "\n":
+                continue
             line = line.strip()
             if line[0] == ">":
                 ID = line[1:]

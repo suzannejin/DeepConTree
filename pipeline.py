@@ -487,7 +487,6 @@ if __name__ == '__main__':
     config.read(paths["yaml"])
     
   
-  
     # Change working directory to output directory
     os.chdir(paths["out_dir"]) 
   
@@ -541,7 +540,6 @@ if __name__ == '__main__':
         # Match atom/residue positions starting with 1
         __match_pdb("pdb/"+prot+".pdb","pdb_matched/"+prot+".pdb")  
     
-
 
     
     # Predict contacts
