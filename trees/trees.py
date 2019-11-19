@@ -66,7 +66,7 @@ if __name__ == '__main__':
     fasta_file = os.path.abspath(args.fa)
     ref_file = os.path.abspath(args.ref_file)
     pdb_dir = os.path.abspath(args.pdb_dir)
-    pfam = os.path.basename(fasta_file).split(".")[0].split("_")[0]  # Remove _calign.fa from NAME_calign.fa
+    pfam = os.path.basename(fasta_file).split(".")[0].replace("_uniprot","").replace("_pdb","")  
     
     
     # Configuration file

@@ -178,7 +178,7 @@ mode=soft
 nmodels=250
 topavg=0.10
 betaoo=no
-nexperiment=2
+nexperiment=1
 
 
 

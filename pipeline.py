@@ -517,6 +517,8 @@ if __name__ == '__main__':
     ids = []  # List of prot pdb ids
     with open(paths["fastapdb"]) as f:
         for line in f:
+            if line == "\n":
+                continue
             line = line.strip()
             if line[0] == ">":
                 name = line[1:]
