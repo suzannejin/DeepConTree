@@ -35,13 +35,13 @@ def __hhblits_aln(fasta_file,aln_file,modified_aln_file,config,cpu):
     
     description_prog = "HHBlits: generate MSA"
     command="{} -i {} -d {} -oa3m {} -n {} -diff {} -cov {} -cpu {}".format(
-                    config.get("alignment","command"),
+                    config.get("alignment-deepcov-deepconpred","command"),
                     fasta_file,
-                    config.get("alignment","database"),
+                    config.get("alignment-deepcov-deepconpred","database"),
                     aln_file,
-                    config.get("alignment","niterations"),
-                    config.get("alignment","diff"),
-                    config.get("alignment","cov"),
+                    config.get("alignment-deepcov-deepconpred","niterations"),
+                    config.get("alignment-deepcov-deepconpred","diff"),
+                    config.get("alignment-deepcov-deepconpred","cov"),
                     cpu)
     __run_command(description_prog,command,separator="#"*60)
     
