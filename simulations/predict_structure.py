@@ -28,7 +28,7 @@ def __prepare_files(fasta_file,seq_file,con_file,con_new,sse_file,tbl,tbl_sse,ar
     os.system("awk '$2-$1>=" + str(args.seqsep) + "&&$5>=" + str(args.score) + "{print $0}' " + con_file + " | sort -k5gr > " + con_new)
 
     # Prepare restraint files
-    if config.get("xplor","betaoo") == "yes":
+    if args.xplor_betaoo == "yes":
         restraint = "o-o"
     else:
         restraint = ""
@@ -36,7 +36,7 @@ def __prepare_files(fasta_file,seq_file,con_file,con_new,sse_file,tbl,tbl_sse,ar
     __prepare_restraints_dihedral(sse_file,tbl_sse)
   
   
-def __run_xplor(ID,seq_file,tbl,tbl_sse,out_dir,bin_dir,cpu,config):
+def __run_xplor(ID,seq_file,tbl,tbl_sse,out_dir,bin_dir,args,config):
     ''' Run simulated annealing using Xplor-NIH '''
     
     description_prog = "Running Xplor-NIH"
@@ -45,12 +45,12 @@ def __run_xplor(ID,seq_file,tbl,tbl_sse,out_dir,bin_dir,cpu,config):
 
     script = bin_dir + "/simulations/annealing.py"
     command = "{} -smp {} -py -o {} {} {} {} {} {} {} {} {}".format(
-                    config.get("xplor","command"),cpu,
+                    config.get("xplor","command"),args.cpu,
                     annealing_out,script,
                     seq_file,tbl,tbl_sse,
-                    config.get("xplor","mode"),out_dir,
-                    config.get("xplor","nmodels"),
-                    config.get("xplor","topavg"))
+                    args.xplor_mode,out_dir,
+                    args.xplor_nmodels,
+                    args.xplor_topavg)
                             
     __run_command(description_prog,command," ")
     
@@ -81,7 +81,13 @@ if __name__ == '__main__':
     app.add_argument("-score","--score",type=float,default=0,help="Score threshold (fifth field in the RR contact file). Default = 0")
     app.add_argument("-seqsep","--seqsep",type=int,default=8,
         help="Cutoff for the separation of residues i,j through the sequence. \
-        Default = 8. Hence, contacts separated by less than 8 residues are removed.")
+        Default = 8. Hence, contacts separated by less than 8 residues are removed.")  
+    # Simulations - Xplor-NIH parameters
+    app.add_argument("-xplor_mode",type=str,default="soft",choices=["soft","hard"])
+    app.add_argument("-xplor_nmodels",type=int,default=250,help="Number of decoy models to be generated.")
+    app.add_argument("-xplor_topavg",type=float,default=0.10,help="Rate of the top models that should be used to generate the average structure.")
+    app.add_argument("-xplor_betaoo",type=str,default="no",choices=["no","yes"],help="Use beta-strand O-O restraints.")
+    app.add_argument("-xplor_nexp",type=int,default=1,help="Number of experiments.")
     args = app.parse_args()
     
     # Files
@@ -110,7 +116,7 @@ if __name__ == '__main__':
     __prepare_files(fasta_file,seq_file,con_file,con_new,sse_file,tbl,tbl_sse,args,config)
 
     # Run Xplor-NIH
-    __run_xplor(ID,seq_file,tbl,tbl_sse,out_dir,bin_dir,args.cpu,config)
+    __run_xplor(ID,seq_file,tbl,tbl_sse,out_dir,bin_dir,args,config)
     
 
 

@@ -66,6 +66,13 @@ def __parse_arguments():
     # Provide structures for tree reconstruction
     app.add_argument("-str_list",type=str,required='trees' in sys.argv and 'simulations' not in sys.argv,help="Structure list with two columns: /absolute/path/to/structure_folder folder_name.")
 
+    # Simulations - Xplor-NIH parameters
+    app.add_argument("-xplor_mode",type=str,default="soft",choices=["soft","hard"],help="Xplor simulations mode. Default=soft")
+    app.add_argument("-xplor_nmodels",type=int,default=250,help="Number of decoy models to be generated. Default=250")
+    app.add_argument("-xplor_topavg",type=float,default=0.10,help="Rate of the top models that should be used to generate the average structure. Default=0.10")
+    app.add_argument("-xplor_betaoo",type=str,default="no",choices=["no","yes"],help="Use beta-strand O-O restraints. Default=no")
+    app.add_argument("-xplor_nexp",type=int,default=1,help="Number of experiments. Default=1")
+
     args = app.parse_args()
     
     
@@ -211,7 +218,7 @@ def __compute_structures(config,paths,scripts,args,ids,cids):
         str_list = open(paths["str_list"],"wt")
 
     # Run Xplor-NIH n times for each protein & method
-    nexperiment = int(config.get("xplor","nexperiment"))
+    nexperiment = int(args.xplor_nexp)
     for n in range(1,nexperiment+1):
         # Read contacts folder, name, threshold {name : (path/to/folder, threshold)}
         cons = {}
@@ -239,10 +246,11 @@ def __compute_structures(config,paths,scripts,args,ids,cids):
                 if not os.path.exists(out_dir):
                     os.makedirs(out_dir)
                 description_prog = "Run Xplor-NIH for " + prot + " (" + name + ") score>=" + threshold + " seqsep>=" + str(args.seqsep)
-                command = "python {} -fa {} -con {} -sse {} -o {} -cpu {} -score {} -seqsep {}".format(
+                command = "python {} -fa {} -con {} -sse {} -o {} -cpu {} -score {} -seqsep {} -xplor_mode {} -xplor_nmodels {} -xplor_topavg {} -xplor_betaoo {} -xplor_nexp {}".format(
                                     scripts["xplor"],fasta_file,
                                     con_file,sse_file,out_dir,args.cpu,
-                                    threshold,args.seqsep)
+                                    threshold,args.seqsep,
+                                    args.xplor_mode,args.xplor_nmodels,args.xplor_topavg,args.xplor_betaoo,args.xplor_nexp)
                 __run_command(description_prog,command,"="*60)
                 a = out_dir + "/annealing_ave.pdb"
                 b = "simulations/" + name + "/n" + str(n) + "/" + prot + ".pdb"
@@ -397,7 +405,7 @@ def __apply_cscore(args,paths,scripts,ids,cids):
 # ==================
 # ==== 3D TREES ====
 
-def __compute_trees(config,paths,scripts,args,ids):
+def __compute_trees(config,paths,scripts,cpu,ids):
     ''' Compute structure-based trees '''
     
     
@@ -437,7 +445,7 @@ def __compute_trees(config,paths,scripts,args,ids):
                 out = out_dir+"/"+prot+".pdb"
                 os.system("bash {} {} {} {}".format(scripts["reformat_pdb"],prediction,experimental,out))
         description_prog = "Compute trees for " + name
-        command = "source {} tree && python {} {} {} {}".format(scripts["environment"],scripts["trees"],paths["fastauniprot"],paths["ref_file"],out_dir)
+        command = "source {} tree && python {} {} {} {} {}".format(scripts["environment"],scripts["trees"],paths["fastauniprot"],paths["ref_file"],out_dir,cpu)
         __run_command(description_prog,command,"="*60)
         
         # Write list of tree with two columns: 1) path to tree.nwk  and  2) tree name
@@ -465,7 +473,7 @@ def __compute_trees(config,paths,scripts,args,ids):
 
 if __name__ == '__main__':
   
-    import os
+    import os,sys
     import glob
     import configparser
     import shutil
@@ -485,8 +493,7 @@ if __name__ == '__main__':
     # Configuration file
     config = configparser.ConfigParser()
     config.read(paths["yaml"])
-    
-  
+
     # Change working directory to output directory
     os.chdir(paths["out_dir"]) 
   
@@ -556,9 +563,5 @@ if __name__ == '__main__':
         
     # Reconstruct structural trees
     if "trees" in args.actions:
-        __compute_trees(config,paths,scripts,args,ids)
+        __compute_trees(config,paths,scripts,args.cpu,ids)
         
-  
-
-  
-  

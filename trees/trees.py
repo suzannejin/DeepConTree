@@ -7,9 +7,9 @@ __description__='''
 '''
 
 
-def __alignment(aln_script,fasta_file,ref_file,pfam):
+def __alignment(aln_script,fasta_file,ref_file,pfam,thread):
     ''' Compute alignment using TMalign '''
-    os.system("bash {} {} {} {}".format(aln_script,fasta_file,ref_file,pfam))
+    os.system("bash {} {} {} {} {}".format(aln_script,fasta_file,ref_file,pfam,thread))
   
   
 def __1d_tree(pfam,config):
@@ -55,6 +55,7 @@ if __name__ == '__main__':
     app.add_argument("fa",type=str,help="Multi-fasta file.")
     app.add_argument("ref_file",type=str,help="Reference/template file. Each line from the reference file should contain the UniProt identifier, a separator and the PDB identifier. For example: >AMCY_PARDE/43-131 _P_ 1MDAA-1 .")
     app.add_argument("pdb_dir",type=str,help="Directory where all the pdb files are stored. Output files will be created here as well.")
+    app.add_argument("thread",type=int,help="Number of threads running T-coffee for the alignment of sequences.")
     args = app.parse_args()
     
     # Scripts
@@ -83,7 +84,7 @@ if __name__ == '__main__':
             os.makedirs(i)
     
     # Compute MSA
-    __alignment(aln_script,fasta_file,ref_file,pfam)
+    __alignment(aln_script,fasta_file,ref_file,pfam,args.thread)
     
     # Compute trees
     __1d_tree(pfam,config)

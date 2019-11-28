@@ -9,13 +9,14 @@
 fasta=$1
 template=$2
 pfam=$3
+thread=$4
 
 
 cd out/aln
 cp ../../*.pdb .
-t_coffee -seq $fasta -template_file $template -method sap_pair TMalign_pair
-t_coffee -other_pg seq_reformat -in *.aln -output phylip_aln -out ${pfam}_tmalign.ph
-t_coffee -other_pg seq_reformat -in *.aln -output fasta_aln -out ${pfam}_tmalign.fa
+t_coffee -seq $fasta -template_file $template -method sap_pair TMalign_pair -thread $thread
+t_coffee -other_pg seq_reformat -in *.aln -output phylip_aln -out ${pfam}_tmalign.ph 
+t_coffee -other_pg seq_reformat -in *.aln -output fasta_aln -out ${pfam}_tmalign.fa 
 rm *.pdb
 
  

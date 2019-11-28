@@ -156,7 +156,7 @@ model=covar
 # However, I didn't modify it as we decided to use all the default configurations whenever possible
 # The parameters used to obtain the MSA in DeepContact is different to the ones used in DeepConPred and DeepCov
 
-[alignment]
+[alignment-deepcov-deepconpred]
 command=hhblits
 database=/users/cn/sjin/programs/hhsuite/databases/uniprot20_2016_02/uniprot20_2016_02
 niterations=3
@@ -174,11 +174,6 @@ cov=60
 
 [xplor]
 command=/users/cn/abaltzis/bin/xplor
-mode=soft
-nmodels=250
-topavg=0.10
-betaoo=no
-nexperiment=1
 
 
 
