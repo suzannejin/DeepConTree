@@ -24,7 +24,7 @@ script3=${dir}/bootrees.R
 
 cd out/tree3d
 echo $pfam > list
-cp ../aln/${pfam}_tmalign.fa ${pfam}/.
+cp ../aln/${pfam}.fa ${pfam}/.
 cp $template ${pfam}/${pfam}_ref.template_list2
 cp ../../*.pdb ${pfam}/.
 
@@ -48,6 +48,6 @@ tree=${pfam}/${pfam}_unw_d4_${msa}${mode}-${mexp}.mat_1.txt.nwk
 cp $tree .
 rm list
 cd ${pfam}
-rm *_tmalign.fa *_ref.template_list2 *.pdb 
+rm *.fa *_ref.template_list2 *.pdb 
  
   

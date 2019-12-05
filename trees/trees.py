@@ -15,13 +15,16 @@ def __alignment(aln_script,fasta_file,ref_file,pfam,thread):
 def __1d_tree(pfam,config):
     ''' Create alignment based tree '''  ## Question: if the alignment used is built considering structural information, then is it still 1d-tree?
     
-    command = "{} -i out/aln/{}_tmalign.ph -o out/tree1d/{}.nwk -m {} {} out/tree1d/{}.boostrap".format(
+    command = "{} -i out/aln/{}_coded.ph -o out/tree1d/{}_coded.nwk -m {} {} out/tree1d/{}_coded.boostrap".format(
                     config.get("tree1d","command"),
                     pfam,pfam,
                     config.get("tree1d","method"),
                     config.get("tree1d","parameters"),
                     pfam)
+    reformat = "t_coffee -other_pg seq_reformat -in out/tree1d/{}_coded.nwk -decode out/aln/table > out/tree1d/{}.nwk".format(pfam,pfam)
     os.system(command)
+    os.system(reformat)
+    
   
   
 def __3d_tree(tree3d_script,pfam,ref_file):
@@ -69,7 +72,7 @@ if __name__ == '__main__':
     pdb_dir = os.path.abspath(args.pdb_dir)
     pfam = os.path.basename(fasta_file).split(".")[0].replace("_uniprot","").replace("_pdb","")  
     
-    
+
     # Configuration file
     yaml = pipeline_dir + "/../configuration.yaml"
     config = configparser.ConfigParser()

@@ -109,7 +109,6 @@ if __name__ == '__main__':
     yaml = "{}/configuration.yaml".format(bin_dir)
     config = configparser.ConfigParser()
     config.read(yaml)
-    shutil.copy(yaml,out_dir)
 
 
     # Prepare files

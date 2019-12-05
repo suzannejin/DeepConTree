@@ -157,3 +157,10 @@ def __prepare_restraints_dihedral(sse_file, out):
     outputfile.close()
 
 
+if __name__ == '__main__':
+    import sys
+    rr = sys.argv[1]
+    fasta = sys.argv[2]
+    out = sys.argv[3]
+    __prepare_restraints_contacts(rr,fasta,out,["contacts"])
+

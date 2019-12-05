@@ -31,7 +31,7 @@ my $output;
 while (my $line=<LIST>)
 {
         chomp $line;
-        $fasta=$line."_".$msa.".fa";
+        $fasta=$line.".fa";
         $template=$line."_ref.template_list2";
         $trees=$line."_unw_d4_"."$msa"."$mode"."-"."$exp.trees";
         $matrices=$line."_unw_d4_"."$msa"."$mode"."-"."$exp".".matrices";

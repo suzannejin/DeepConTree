@@ -31,6 +31,7 @@ cd trees
 
 
 # Merge tree.nwk files
+[[ -s trees.nwk ]] && rm trees.nwk
 touch trees.nwk
 files=$(cut -f1 -d" " tree_list)
 for file in $files; do

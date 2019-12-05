@@ -10,14 +10,15 @@ def __extract_native_contacts(pdb,out):
 
     with open(pdb) as p:
         for line in p:
-            line = line.split()
-            line = filter(None,line)
-            if len(line) == 0:
+            line = line.strip("\n")
+            fields = line.split()
+            fields = filter(None,fields)
+            if len(fields) == 0:
                 continue
-            if ((line[0] == "ATOM" and line[2] == "CB" and line[3] != "GLY") or 
-                (line[0] == "ATOM" and line[2] == "CA" and line[3] == "GLY")):
-                res = int(line[5])
-                x,y,z = float(line[6]),float(line[7]),float(line[8])
+            if ((fields[0] == "ATOM" and fields[2] == "CB" and fields[3] != "GLY") or 
+                (fields[0] == "ATOM" and fields[2] == "CA" and fields[3] == "GLY")):
+                res = int(fields[5])
+                x,y,z = float(line[30:38].strip()),float(line[38:46].strip()),float(line[46:54].strip())
                 tmp[res] = [x,y,z]
          
     for i in tmp.keys():
