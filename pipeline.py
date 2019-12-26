@@ -187,7 +187,7 @@ def __compute_structures(config,paths,scripts,args,ids,cids):
     if "contacts" in args.actions: 
         paths["con_list"] = paths["out_dir"] + "/contacts/con_list"
         f = open(paths["con_list"],"wt")
-        f.write(paths["out_dir"] + "/contacts/native native 0\n")
+        #f.write(paths["out_dir"] + "/contacts/native native 0\n")   # Reconstruct structures from native contacts
         for method in args.method:
             if method == "deepcov":
                 score = args.pdeepcov
@@ -277,7 +277,8 @@ def __manage_sse(sse_dir,script,ids,actions,methods,cpu):
         for prot in ids:
             a = sse_dir+"/"+prot+".sse"
             b = "sse/"+prot+".sse"
-            shutil.copy(a,b)
+            if os.path.abspath(a) != os.path.abspath(b):
+                shutil.copy(a,b)
     else:
         # Copy SSE files predicted by Spider3 
         if "contacts" in actions and "deepconpred" in methods:
@@ -509,9 +510,14 @@ if __name__ == '__main__':
     # Manage files for easy use 
     shutil.copy(paths["ref_file"],".")
     lines = open(paths["multifasta"]).readlines()
-    line = lines[0].strip().split(" ")
+    name1 = lines[0].strip().split(" ")[0][1:]  # Name of the first sequence
+    refnames = {}  # Ref file in a dictionary
+    with open(paths["ref_file"]) as ref:
+        for line in ref:
+            fields = line.strip("\n").split(" ")
+            refnames[fields[0][1:]] = fields[1]
     #If multifasta named with uniprot id
-    if not os.path.isfile(paths["pdb_dir"] + "/" + line[0][1:] + ".pdb"):
+    if name1 in refnames.keys():
         # Create multi-fasta file named with PDB ID
         __map_names(paths["multifasta"],paths["ref_file"],paths["fastapdb"],"uniprot_to_pdb")
         shutil.copy(paths["multifasta"],paths["fastauniprot"])

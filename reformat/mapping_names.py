@@ -16,8 +16,10 @@ def __map_names(fasta_file,reference_file,corrected_fasta_file,to):
     to = "pdb_to_uniprot" / "uniprot_to_pdb" / ""
     '''
     
+    import collections
+    
     names = {}
-    fasta = {}
+    fasta = collections.OrderedDict()
     out = open(corrected_fasta_file,"wt")
   
   
