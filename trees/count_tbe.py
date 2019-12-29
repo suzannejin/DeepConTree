@@ -463,13 +463,15 @@ def get_avg_tbe(tree):
     return(avgtbe)
     
 def get_deepest_node_tbe(nodes):
-    maxshal = 0
-    maxn = None
+    shal={}
+    boot=[]
     for n in nodes.iterkeys():
-        if nodes[n].shallowness>maxshal:
-            maxshal=nodes[n].shallowness
-            maxn=n
-    return(nodes[maxn].bootstrap)
+        shal[n]=nodes[n].shallowness
+    maxshal=max(shal.values())
+    for n in shal:
+        if shal[n]==maxshal:
+            boot.append(nodes[n].bootstrap)
+    return(min(boot))
     
     
 if __name__=='__main__':
