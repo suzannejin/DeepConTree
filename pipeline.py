@@ -44,7 +44,7 @@ def __parse_arguments():
     app.add_argument("-cpu",type=int,default=1,help="Number of cpus. Default=1")
     
     # Actions
-    app.add_argument("-actions",nargs='+',choices=['contacts','simulations','trees'],required=True)
+    app.add_argument("-actions",nargs='+',choices=['contacts','simulations','trees','rf'],required=True)
     
     # Contact predictors
     app.add_argument("-method",nargs='+',choices=['deepcov','deepconpred','deepcontact'],required='contacts' in sys.argv,help="Contact predictors.")
@@ -453,7 +453,10 @@ def __compute_trees(config,paths,scripts,cpu,ids):
         if name != "experimental":
             f.write(paths["out_dir"] + "/trees/" + name + "/out/tree3d/" + treename + " " + name + "\n")
     f.close()
+    __compute_rf(scripts,paths,config)
     
+
+def __compute_rf(scripts,paths,config):
     # Calculate RF score
     description_prog = "Calculate RF score"
     command = "bash {} {} {} {} {}".format(
@@ -570,4 +573,7 @@ if __name__ == '__main__':
     # Reconstruct structural trees
     if "trees" in args.actions:
         __compute_trees(config,paths,scripts,args.cpu,ids)
+        
+    if "rf" in args.actions:
+        __compute_rf(scripts,paths,config)
         

@@ -34,12 +34,12 @@ plotTreelabels2 <- function(tree,tree2,tree3,color1,color2,color3){
 }
 
 
-plotTreelabels3 <- function(tree,tree2,tree3,tree4,color2,color3,color4){
+plotTreelabels3 <- function(tree,tree2,tree3,tree4,color2,color3,color4,root){
 
     plot(tree,use.edge.length=FALSE,cex=0.75,font=1,label.offset=0.25)
-    nodelabels(prop.clades(tree,tree2,rooted=TRUE),cex=0.5,font=2,adj=c(-1.2,-1.5),bg=color2)
-    nodelabels(prop.clades(tree,tree3,rooted=TRUE),cex=0.5,font=2,adj=c(-1.2,0.5),bg=color3)
-    nodelabels(prop.clades(tree,tree4,rooted=TRUE),cex=0.5,font=2,adj=c(-1.2,2.5),bg=color4)
+    nodelabels(prop.clades(tree,tree2,rooted=root),cex=0.5,font=2,adj=c(-1.2,-1.5),bg=color2)
+    nodelabels(prop.clades(tree,tree3,rooted=root),cex=0.5,font=2,adj=c(-1.2,0.5),bg=color3)
+    nodelabels(prop.clades(tree,tree4,rooted=root),cex=0.5,font=2,adj=c(-1.2,2.5),bg=color4)
 }
 
 
@@ -51,10 +51,17 @@ plotTreelabels3 <- function(tree,tree2,tree3,tree4,color2,color3,color4){
 ##
 exp <- read.tree(paste(pfam,"/trees/experimental/out/tree3d/",pfam,"_unw_d4_tmalign4-2.mat_1.txt.nwk",sep=""))
 exp_1d <- read.tree(paste(pfam,"/trees/experimental/out/tree1d/",pfam,".nwk",sep=""))
-nat <- read.tree(paste(pfam,"/trees/native_models250_n1/out/tree3d/",pfam,"_unw_d4_tmalign4-2.mat_1.txt.nwk",sep=""))
-nat_1d <- read.tree(paste(pfam,"/trees/native_models250_n1/out/tree1d/",pfam,".nwk",sep=""))
 deep <- read.tree(paste(pfam,"/trees/deepconpred35_models250_n1/out/tree3d/",pfam,"_unw_d4_tmalign4-2.mat_1.txt.nwk",sep=""))
 deep_1d <- read.tree(paste(pfam,"/trees/deepconpred35_models250_n1/out/tree1d/",pfam,".nwk",sep=""))
+nat <- read.tree(paste(pfam,"/trees/native_models250_n1/out/tree3d/",pfam,"_unw_d4_tmalign4-2.mat_1.txt.nwk",sep=""))
+nat_1d <- read.tree(paste(pfam,"/trees/native_models250_n1/out/tree1d/",pfam,".nwk",sep=""))
+
+exp <- read.tree(paste(pfam,"/trees/experimental/out/tree3d/",pfam,"_unw_d4_tmalign4-2.mat_1.txt.nwk",sep=""))
+exp_1d <- read.tree(paste(pfam,"/trees/experimental/out/tree1d/",pfam,".nwk",sep=""))
+nat <- read.tree(paste(pfam,"/trees/native_models500_n1/out/tree3d/",pfam,"_unw_d4_tmalign4-2.mat_1.txt.nwk",sep=""))
+nat_1d <- read.tree(paste(pfam,"/trees/native_models500_n1/out/tree1d/",pfam,".nwk",sep=""))
+deep <- read.tree(paste(pfam,"/trees/deepconpred35_models500_n1/out/tree3d/",pfam,"_unw_d4_tmalign4-2.mat_1.txt.nwk",sep=""))
+deep_1d <- read.tree(paste(pfam,"/trees/deepconpred35_models500_n1/out/tree1d/",pfam,".nwk",sep=""))
 
 
 RF.dist(exp,deep,normalize=TRUE)
@@ -62,6 +69,10 @@ RF.dist(exp,exp_1d,normalize=TRUE)
 RF.dist(deep,deep_1d,normalize=TRUE)
 RF.dist(exp_1d,deep_1d,normalize=TRUE)
 
+RF.dist(exp,deep,normalize=TRUE,rooted=TRUE)
+RF.dist(exp,exp_1d,normalize=TRUE,rooted=TRUE)
+RF.dist(deep,deep_1d,normalize=TRUE,rooted=TRUE)
+RF.dist(exp_1d,deep_1d,normalize=TRUE,rooted=TRUE)
 
 
 
@@ -70,12 +81,28 @@ tol <- read.tree(dir(path=paste("original/",pfam,sep=""),pattern="*_taxa_tree_de
 exp <- read.tree(dir(path=paste("out/",pfam,"/trees/experimental/out/tree3d",sep=""),pattern="*_species_unw_d4_tmalign4-2.mat_1.txt.nwk",full.names=TRUE))
 exp_1d <- read.tree(dir(path=paste("out/",pfam,"/trees/experimental/out/tree1d",sep=""),pattern="*_species.nwk",full.names=TRUE))
 deep <- read.tree(dir(path=paste("out/",pfam,"/trees/deepconpred_score0-35_seqsep8_n1/out/tree3d",sep=""),pattern="*_species_unw_d4_tmalign4-2.mat_1.txt.nwk",full.names=TRUE))
+deep_1d <- read.tree(dir(path=paste("out/",pfam,"/trees/deepconpred_score0-35_seqsep8_n1/out/tree1d",sep=""),pattern="*_species.nwk",full.names=TRUE))
+nat <- read.tree(dir(path=paste("out/",pfam,"/trees/native_n1/out/tree3d",sep=""),pattern="*_species_unw_d4_tmalign4-2.mat_1.txt.nwk",full.names=TRUE))
+nat_1d <- read.tree(dir(path=paste("out/",pfam,"/trees/native_n1/out/tree1d",sep=""),pattern="*_species.nwk",full.names=TRUE))
 
+RF.dist(tol,exp_1d,normalize=TRUE)
+RF.dist(tol,exp,normalize=TRUE)
+RF.dist(tol,deep_1d,normalize=TRUE)
+RF.dist(tol,deep,normalize=TRUE)
+RF.dist(tol,nat_1d,normalize=TRUE)
+RF.dist(tol,nat,normalize=TRUE)
 
+RF.dist(tol,exp_1d,normalize=TRUE,rooted=TRUE)
+RF.dist(tol,exp,normalize=TRUE,rooted=TRUE)
+RF.dist(tol,deep_1d,normalize=TRUE,rooted=TRUE)
+RF.dist(tol,deep,normalize=TRUE,rooted=TRUE)
+RF.dist(tol,nat_1d,normalize=TRUE,rooted=TRUE)
+RF.dist(tol,nat,normalize=TRUE,rooted=TRUE)
 
 
 # Booster
-trees <- list(read.tree(paste(pfam,"/trees/booster_trees/exp3d_exp1d.nwk",sep="")),read.tree(paste(pfam,"/trees/booster_trees/exp3d_deep3d.nwk",sep="")))#,read.tree(paste(pfam,"/trees/booster_trees/exp3d_nat3d.nwk",sep="")))
+trees <- list(read.tree(paste(pfam,"/trees/booster_trees/exp3d_exp1d.nwk",sep="")),read.tree(paste(pfam,"/trees/booster_trees/exp3d_deep3d.nwk",sep="")),read.tree(paste(pfam,"/trees/booster_trees/exp3d_nat3d.nwk",sep="")))
 #for (n in 1:length(trees)){trees[[n]]$node.label <- as.integer(as.numeric(trees[[n]]$node.label)*100)}
 
 for (n in 1:length(trees)){print(mean(as.numeric(trees[[n]]$node.label,na.rm=TRUE),na.rm=TRUE))}
+

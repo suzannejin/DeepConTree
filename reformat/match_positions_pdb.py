@@ -1,5 +1,11 @@
 
 
+__description__='''
+
+    Reset PDB atom/residue position starting from 1.
+
+'''
+
 
 def __match_pdb(pdb,output):
     ''' It corrects the atom/residue positions of a pdb file.
@@ -53,4 +59,14 @@ def __match_pdb(pdb,output):
             out.write(line+"\n")
 
 
+if __name__=='__main__':
+    
+    import argparse
+    
+    app = argparse.ArgumentParser(description=__description__)
+    app.add_argument('pdb',type=str,help="Original PDB file")
+    app.add_argument('out',type=str,help="Output PDB file with the atom/residue positions strating from 1.")
+    args=app.parse_args()
+    
+    __match_pdb(args.pdb,args.out)
 

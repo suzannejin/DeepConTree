@@ -57,7 +57,7 @@ if __name__ == '__main__':
     app = argparse.ArgumentParser(description=__description__)
     app.add_argument("fa",type=str,help="Multi-fasta file.")
     app.add_argument("ref_file",type=str,help="Reference/template file. Each line from the reference file should contain the UniProt identifier, a separator and the PDB identifier. For example: >AMCY_PARDE/43-131 _P_ 1MDAA-1 .")
-    app.add_argument("pdb_dir",type=str,help="Directory where all the pdb files are stored. Output files will be created here as well.")
+    app.add_argument("pdb_dir",type=str,help="Directory where all the pdb files are stored. Output files will be created here as well. Note: make sure that the format of the pdb files is correct (header, etc).")
     app.add_argument("thread",type=int,help="Number of threads running T-coffee for the alignment of sequences.")
     args = app.parse_args()
     

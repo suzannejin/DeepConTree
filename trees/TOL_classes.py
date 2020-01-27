@@ -563,7 +563,7 @@ def classes2bootstrap(nodes1d, nodes3d, no_l, t_nodes, tree_file):
     for i in nodes1d.iterkeys():
         for j in nodes3d.iterkeys():
             if int(nodes1d[i].label)>int(no_l)and nodes1d[i].name!='root':  # If internal node
-                if nodes3d[j].in_partition!=None and sorted(nodes1d[i].in_partition)== sorted(nodes3d[j].in_partition):  # If the same branch
+                if nodes3d[j].in_partition!=None and sorted(nodes1d[i].in_partition)== sorted(nodes3d[j].in_partition):  # If the same branch in 1D and 3D
                     f1d3d.append(nodes1d[i].bootstrap)
                     f3d1d.append(nodes3d[j].bootstrap)
                     nodes1d[i].shared='S'
@@ -571,6 +571,7 @@ def classes2bootstrap(nodes1d, nodes3d, no_l, t_nodes, tree_file):
     for i in nodes1d.iterkeys():
         if int(nodes1d[i].label)>int(no_l) and nodes1d[i].name!='root':
             #print nodes1d[i].label
+            print(sorted(nodes1d[i].in_partition))
             if sorted(nodes1d[i].in_partition) in binary:
                 f1d.append(nodes1d[i].bootstrap)
                 #print str(tree_file[0:7])
@@ -603,7 +604,7 @@ def classes2bootstrap(nodes1d, nodes3d, no_l, t_nodes, tree_file):
 if __name__ == '__main__':
     tree_file1d=sys.argv[1]
     tree_file3d=sys.argv[2]
-    msa_file=sys.argv[3]
+    msa_file=sys.argv[3]  # Alignment .fa
     taxa_t_file=sys.argv[4]   # TOL tree
     seq2taxa_file=sys.argv[5]   # Seq to taxa list
     out_file_b_id_sh=sys.argv[6]
